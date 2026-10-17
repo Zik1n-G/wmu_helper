@@ -128,8 +128,6 @@ powershell -ExecutionPolicy Bypass -File build-apk.ps1
 Get-FileHash Zik1nG-Schedule-debug.apk -Algorithm SHA256
 ```
 
-任何来源的安装包，哈希对不上就不是这份代码构建的，别装。
-
 ## 配置（.env）
 
 复制 `.env.example` 为 `.env`：
