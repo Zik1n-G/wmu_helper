@@ -1,0 +1,38 @@
+# 凭据（绝不提交）
+.env
+*.env
+!.env.example
+
+# 登录会话缓存（含 Cookie，绝不提交）
+.cache/
+
+# 输出产物（课表数据/日历/导出文件）
+output/
+webapp/schedule-data.json
+*.pdf
+*.png
+!android/app/src/main/res/**/*.png
+
+# 构建产物
+android/build/
+*.apk
+
+# 签名库（本地调试密钥，不提交）
+android/debug.keystore
+*.keystore
+*.jks
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store

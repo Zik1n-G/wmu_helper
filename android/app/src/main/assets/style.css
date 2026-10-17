@@ -1,0 +1,559 @@
+/* WMU 课表 - 移动端优先样式（后续 Capacitor 打包 APK） */
+
+:root {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --primary: #2f6bd8;
+  --text: #1f2329;
+  --text-2: #646a73;
+  --line: #e5e6eb;
+  --accent: #eef3ff;
+  --danger: #d54941;
+  --shadow: 0 2px 10px rgba(31, 35, 41, .08);
+  --sidebar-w: 132px;
+  --ease: cubic-bezier(.4, 0, .2, 1);
+  --dur: .3s;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- 布局：侧边栏 + 主区 ---------- */
+.layout { display: flex; min-height: 100vh; }
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+/* ---------- 侧边栏 ---------- */
+.sidebar {
+  flex: 0 0 var(--sidebar-w);
+  width: var(--sidebar-w);
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+}
+.sidebar-head {
+  padding: 14px 14px 10px;
+  font-size: 12px; font-weight: 600; color: var(--text-2);
+  letter-spacing: .05em;
+}
+.month-list { padding-bottom: 20px; }
+
+.month-item { border-bottom: 1px solid var(--line); }
+.month-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 12px 14px;
+  border: none; background: none;
+  font-size: 14px; color: var(--text);
+  cursor: pointer; text-align: left;
+}
+.month-btn .arrow { font-size: 10px; color: var(--text-2); transition: transform .15s; }
+.month-item.open .month-btn .arrow { transform: rotate(90deg); }
+.month-btn.current { color: var(--primary); font-weight: 600; }
+
+.week-list { display: none; padding: 2px 0 8px; }
+.month-item.open .week-list { display: block; }
+.week-item {
+  display: block; width: 100%;
+  padding: 9px 14px 9px 22px;
+  border: none; background: none;
+  font-size: 13px; color: var(--text-2);
+  text-align: left; cursor: pointer;
+}
+.week-item.active { color: var(--primary); font-weight: 600; background: var(--accent); }
+.week-item.current::after {
+  content: "本周"; float: right;
+  font-size: 10px; color: var(--primary);
+  padding: 1px 5px; border-radius: 6px; background: var(--accent);
+}
+
+/* ---------- 顶栏 ---------- */
+.app-bar {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+.icon-btn {
+  width: 34px; height: 34px; flex: 0 0 34px;
+  border: none; border-radius: 8px;
+  background: var(--accent); color: var(--primary);
+  font-size: 16px; cursor: pointer;
+}
+.icon-btn:active { transform: scale(.94); }
+.icon-btn.danger { background: #fdecec; color: var(--danger); }
+.icon-btn.menu { display: none; }   /* 宽屏隐藏，手机显示 */
+
+.term-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+#week-label { font-size: 17px; font-weight: 600; }
+.student { font-size: 12px; color: var(--text-2); }
+.actions { display: flex; gap: 8px; }
+
+/* ---------- 周课表 ---------- */
+.schedule { padding: 12px 14px 32px; }
+
+.day-block { margin-bottom: 14px; }
+.day-head { display: flex; align-items: baseline; gap: 8px; padding: 4px 2px 8px; }
+.day-name { font-size: 14px; font-weight: 600; }
+.day-count { font-size: 12px; color: var(--text-2); }
+
+.course-card {
+  display: block; width: 100%;
+  margin-bottom: 8px; padding: 12px 14px;
+  border: none; border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  text-align: left; cursor: pointer;
+}
+.course-card:active { transform: scale(.985); }
+.course-card .c-name { font-size: 14px; font-weight: 600; }
+
+/* 选修课：橙色系 + 标签，与必修课区分 */
+.course-card.elective { border-left-color: #f08c3c; background: #fffaf5; }
+.day-name.elective { color: #d97b22; }
+.badge {
+  display: inline-block; margin-left: 6px; padding: 1px 6px;
+  border-radius: 6px; background: #fdecd9; color: #c96a12;
+  font-size: 10px; font-weight: 500; vertical-align: middle;
+}
+.course-card .c-meta {
+  display: flex; flex-wrap: wrap; gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 12px; color: var(--text-2);
+}
+.course-card .c-meta span::before {
+  content: ""; display: inline-block;
+  width: 3px; height: 3px; margin-right: 6px;
+  border-radius: 50%; background: var(--primary);
+  vertical-align: middle;
+}
+
+/* ---------- 弹层 ---------- */
+.detail-mask {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, .45);
+  animation: fade-in var(--dur) var(--ease);
+  /* 阻止触摸滚动穿透到底下的课表页 */
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+.detail-card {
+  position: relative;
+  width: 100%; max-width: 380px;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .22);
+  animation: pop-in var(--dur) var(--ease);
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop-in {
+  from { transform: scale(.92) translateY(8px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.detail-mask.closing { animation: fade-out var(--dur) var(--ease) forwards; }
+.detail-mask.closing .detail-card { animation: pop-out var(--dur) var(--ease) forwards; }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes pop-out { to { transform: scale(.94); opacity: 0; } }
+
+.detail-card h2 { font-size: 18px; margin-bottom: 4px; }
+.detail-card .d-teacher { font-size: 13px; color: var(--text-2); margin-bottom: 14px; }
+.detail-row { display: flex; padding: 10px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.detail-row .k { flex: 0 0 76px; color: var(--text-2); }
+.detail-row .v { flex: 1; }
+.detail-close {
+  width: 100%; margin-top: 16px; padding: 12px;
+  border: none; border-radius: 10px;
+  background: var(--primary); color: #fff;
+  font-size: 15px; cursor: pointer;
+}
+
+/* ---------- 删除确认 ---------- */
+.confirm-card h2 { margin-bottom: 8px; }
+.confirm-text { font-size: 13px; color: var(--text-2); margin-bottom: 18px; }
+.confirm-actions { display: flex; gap: 12px; }
+.confirm-actions button {
+  flex: 1; padding: 12px;
+  border: none; border-radius: 10px;
+  font-size: 15px; cursor: pointer;
+}
+.btn-ghost { background: var(--bg); color: var(--text); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-ghost:active, .btn-danger:active { transform: scale(.98); }
+
+.empty-tip {
+  /* 首屏直接可见：固定层垂直居中，避开顶栏 */
+  position: fixed;
+  left: 0; right: 0;
+  top: var(--app-bar-h, 58px);
+  bottom: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px;
+  text-align: center; color: var(--text-2); font-size: 13px;
+  background: var(--bg);
+  z-index: 5;
+}
+.empty-tip code { padding: 2px 6px; border-radius: 4px; background: var(--bg); font-size: 12px; }
+
+/* ---------- 手机：侧边栏变抽屉 ---------- */
+.sidebar-mask {
+  position: fixed; inset: 0; z-index: 40;
+  background: rgba(0, 0, 0, .4);
+}
+@media (max-width: 640px) {
+  .sidebar {
+    position: fixed; top: 0; bottom: 0; left: 0; z-index: 50;
+    transform: translateX(-100%);
+    transition: transform .2s ease-out;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, .12);
+  }
+  .sidebar.open { transform: none; }
+  .icon-btn.menu { display: block; }
+}
+
+/* ---------- 当日课程胶囊（顶栏周标签旁） ---------- */
+.today-strip {
+  display: flex; gap: 8px;
+  padding: 10px 14px;
+  overflow-x: auto;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  scrollbar-width: none;
+}
+.today-strip::-webkit-scrollbar { display: none; }
+.today-strip .strip-hint {
+  flex: 0 0 auto; align-self: center;
+  font-size: 12px; color: var(--text-2);
+}
+.pill {
+  flex: 0 0 auto;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  border: none; border-radius: 16px;
+  background: var(--accent); color: var(--primary);
+  font-size: 12px; cursor: pointer;
+  animation: pop-in var(--dur) var(--ease) backwards;
+}
+.pill:active { transform: scale(.95); }
+.pill .pill-sec { font-weight: 600; }
+.pill.elective { background: #fdecd9; color: #c96a12; }
+.pill.free {
+  background: var(--bg); color: var(--text-2);
+  cursor: default;
+}
+
+/* ---------- 当日详情页（全屏时间轴） ---------- */
+.day-view {
+  position: fixed; inset: 0; z-index: 80;
+  display: flex; flex-direction: column;
+  background: var(--bg);
+  animation: day-in var(--dur) var(--ease);
+}
+.day-view.closing { animation: day-out var(--dur) var(--ease) forwards; }
+@keyframes day-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes day-out { to { transform: translateX(24px); opacity: 0; } }
+
+.day-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+}
+.day-title { flex: 1; display: flex; flex-direction: column; align-items: center; }
+#day-heading { font-size: 16px; font-weight: 600; }
+.day-sub { font-size: 11px; color: var(--text-2); }
+.day-spacer { width: 34px; }
+
+.day-body { flex: 1; overflow-y: auto; padding: 12px 14px 40px; }
+
+/* 时间轴：左侧时间刻度 + 右侧课程卡片 */
+.timeline { position: relative; }
+.tl-empty {
+  padding: 60px 20px; text-align: center;
+  color: var(--text-2); font-size: 13px;
+}
+.tl-row {
+  display: flex; gap: 10px;
+  margin-bottom: 10px;
+  animation: row-in var(--dur) var(--ease) backwards;
+}
+@keyframes row-in { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* 时间刻度列 */
+.tl-time {
+  flex: 0 0 52px;
+  padding-top: 10px;
+  text-align: right;
+  font-size: 11px; color: var(--text-2);
+  line-height: 1.4;
+}
+.tl-time b { display: block; font-size: 12px; color: var(--text); font-weight: 600; }
+
+/* 课程卡片（一列一张，铺开） */
+.tl-card {
+  flex: 1; min-width: 0;
+  padding: 12px 14px;
+  border: none; border-left: 4px solid var(--primary);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  text-align: left; cursor: pointer;
+  transition: transform .15s var(--ease);
+}
+.tl-card:active { transform: scale(.98); }
+.tl-card.elective { border-left-color: #f08c3c; background: #fffaf5; }
+.tl-card .c-name { font-size: 14px; font-weight: 600; }
+.tl-card .c-meta {
+  display: flex; flex-wrap: wrap; gap: 4px 12px;
+  margin-top: 6px;
+  font-size: 12px; color: var(--text-2);
+}
+.tl-card .c-meta span::before {
+  content: ""; display: inline-block;
+  width: 3px; height: 3px; margin-right: 6px;
+  border-radius: 50%; background: var(--primary);
+  vertical-align: middle;
+}
+
+/* ---------- 课程详情（参考钉钉：图标行） ---------- */
+.detail-head {
+  margin: -20px -20px 14px;
+  padding: 14px 20px;
+  border-radius: 16px 16px 0 0;
+  background: var(--primary); color: #fff;
+}
+.detail-head h2 { font-size: 17px; color: #fff; }
+.detail-head .d-teacher { font-size: 12px; color: rgba(255,255,255,.85); margin-top: 2px; }
+.detail-row { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid var(--line); font-size: 13px; }
+.detail-row:first-of-type { border-top: none; }
+.detail-row .k { flex: 0 0 20px; text-align: center; color: var(--primary); font-size: 14px; }
+.detail-row .v { flex: 1; }
+.detail-row .tag {
+  display: inline-block; margin-left: 6px; padding: 1px 6px;
+  border-radius: 6px; background: var(--accent); color: var(--primary);
+  font-size: 10px;
+}
+.detail-close {
+  width: 100%; margin-top: 16px; padding: 12px;
+  border: none; border-radius: 10px;
+  background: var(--primary); color: #fff;
+  font-size: 15px; cursor: pointer;
+}
+
+/* ---------- 通知中心（节假日/换课提醒） ---------- */
+/* 铃铛红点：有未读时显示 */
+#btn-bell { position: relative; }
+#btn-bell.has-dot::after {
+  content: '';
+  position: absolute; top: 4px; right: 4px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+  border: 2px solid var(--card);
+}
+
+.notif-card { max-width: 400px; position: relative; }
+
+/* 弹层右上角 × 关闭 */
+.x-close {
+  position: absolute; top: 10px; right: 10px;
+  width: 30px; height: 30px;
+  border: none; border-radius: 50%;
+  background: var(--bg); color: var(--text-2);
+  font-size: 18px; line-height: 1;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.x-close:active { background: var(--line); color: var(--text); }
+/* 带 × 的卡片标题给右上角按钮留位 */
+.notif-card h2, #notif-detail-title { padding-right: 36px; }
+.notif-list {
+  max-height: 46vh; overflow-y: auto;
+  margin: 12px 0 4px;
+  border-radius: 10px;
+  background: var(--bg);
+  /* 列表自己可滚（竖直），但不穿透到底层课表 */
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.notif-item {
+  position: relative;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  transition: background var(--dur) var(--ease);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:active { background: var(--accent); }
+.notif-item .n-title {
+  font-size: 14px; color: var(--text-2); font-weight: 400;
+  padding-right: 16px;
+}
+.notif-item.unread .n-title { font-weight: 600; color: var(--text); }
+.notif-item.unread::before {
+  content: '';
+  position: absolute; left: 0; top: 8px; bottom: 8px;
+  width: 3px; border-radius: 2px;
+  background: var(--primary);
+}
+.notif-item .n-dot {
+  position: absolute; right: 14px; top: 16px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+}
+.notif-item .n-date {
+  margin-top: 4px;
+  font-size: 11px; color: var(--text-2);
+  text-align: right;
+}
+.notif-empty {
+  padding: 32px 0;
+  text-align: center; font-size: 13px; color: var(--text-2);
+}
+.notif-actions { margin-top: 8px; }
+.notif-actions button {
+  width: 100%; padding: 10px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--card); color: var(--text);
+  font-size: 13px; cursor: pointer;
+  transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.notif-actions button:active { transform: scale(.98); }
+.notif-actions button:disabled {
+  opacity: .45; cursor: default;
+  transform: none;
+}
+.notif-body {
+  font-size: 14px; line-height: 1.7; color: var(--text);
+  margin: 10px 0 4px;
+  white-space: pre-wrap;
+}
+
+/* ---------- 回到本周悬浮按钮 ---------- */
+/* 深琥珀橙（Material Amber 700）：与选修课浅橙区分、浅灰底上醒目 */
+.fab-today {
+  position: fixed;
+  right: 18px; bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 30;
+  width: 52px; height: 52px;
+  border: none; border-radius: 50%;
+  background: #f57c00;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 18px rgba(245, 124, 0, .42);
+  cursor: pointer;
+  /* 出现/消失动画 */
+  opacity: 0;
+  transform: translateY(16px) scale(.8);
+  pointer-events: none;
+  transition: opacity var(--dur) var(--ease),
+              transform var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease);
+}
+.fab-today.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.fab-today:active {
+  transform: scale(.92);
+  box-shadow: 0 3px 10px rgba(245, 124, 0, .5);
+}
+.fab-today.hidden { display: none; }
+
+/* ---------- 当日详情页：纵轴按节次号（横轴=第N节） ---------- */
+.tl-wrap {
+  position: relative;
+  padding-left: 64px;      /* 给纵轴刻度留位 */
+  padding-right: 2px;
+}
+
+/* 纵轴刻度列 */
+.tl-axis { position: relative; width: 60px; margin-left: -64px; float: left; }
+.tl-tick {
+  position: absolute; left: 0; width: 60px;
+  height: 52px;
+  padding-top: 2px;
+  text-align: right;
+  font-size: 10px; color: var(--text-2);
+  line-height: 1.35;
+  border-top: 1px dashed var(--line);
+}
+.tl-tick b { display: block; font-size: 11px; color: var(--text); font-weight: 600; }
+.tl-tick i { display: block; font-style: normal; }
+
+/* 课程块轨道 */
+.tl-track { position: relative; margin-left: 8px; }
+
+/* 课程块：一列一张，按节次绝对定位，高度=跨越节数 */
+.tl-block {
+  position: absolute; left: 0; right: 0;
+  display: block;
+  padding: 8px 12px;
+  border: none; border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  text-align: left; cursor: pointer;
+  overflow: hidden;
+  animation: block-in var(--dur) var(--ease) backwards;
+}
+@keyframes block-in { from { transform: translateY(8px) scale(.98); opacity: 0; } to { transform: none; opacity: 1; } }
+.tl-block:active { transform: scale(.99); }
+.tl-block.elective { border-left-color: #f08c3c; background: #fffaf5; }
+.tl-block .c-name { font-size: 13px; font-weight: 600; }
+.tl-block .c-meta {
+  display: flex; flex-wrap: wrap; gap: 2px 10px;
+  margin-top: 4px;
+  font-size: 11px; color: var(--text-2);
+}
+.tl-block .c-meta span::before {
+  content: ""; display: inline-block;
+  width: 3px; height: 3px; margin-right: 5px;
+  border-radius: 50%; background: var(--primary);
+  vertical-align: middle;
+}
+/* 选修课卡片（纵轴下方，静态流式） */
+.tl-block.static { position: static; width: 100%; margin-bottom: 8px; }
+
+.tl-elective { margin-top: 14px; }
+.tl-elective-head {
+  padding: 4px 2px 8px;
+  font-size: 12px; font-weight: 600; color: #d97b22;
+}
+
+/* ---------- 登录引导（本地无课表数据时） ---------- */
+.login-btn {
+  margin-top: 14px; padding: 10px 28px;
+  border: none; border-radius: 10px;
+  background: var(--primary); color: #fff;
+  font-size: 15px; cursor: pointer;
+  animation: pop-in var(--dur) var(--ease);
+}
+.login-btn:active { transform: scale(.96); }
+.login-btn:disabled { opacity: .6; }
+.login-msg { color: var(--text-2); }
+
+/* ---------- 日志 ---------- */
+.log-card { max-width: 92vw; }
+#log-text {
+  width: 100%; height: 46vh; margin: 10px 0;
+  padding: 10px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--bg); color: var(--text);
+  font-family: Menlo, Consolas, monospace; font-size: 10px;
+  line-height: 1.5; white-space: pre-wrap;
+}
