@@ -123,3 +123,10 @@ if ($LASTEXITCODE -ne 0) { throw "apksigner verify failed" }
 Write-Output ""
 Write-Output "APK built: $signedApk"
 & $aapt dump badging $signedApk | Select-Object -First 3
+
+# SHA256 校验值：每次构建打印，便于发布时公布、用户下载后比对
+Write-Output ""
+Write-Output "==> sha256"
+$sha256 = (Get-FileHash -LiteralPath $signedApk -Algorithm SHA256).Hash
+Write-Output "SHA256: $sha256"
+Write-Output "(比对命令: Get-FileHash <下载的apk> -Algorithm SHA256)"

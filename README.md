@@ -6,26 +6,7 @@
 
 Android APP 是主要形态，界面是纯 Web，同一套代码在电脑上也能跑（Python CLI 拉取后本地预览）。
 
-## 界面
-
-![周课表视图](docs/screenshots/week-view.jpg)
-
-侧边栏按月份选周，课程卡片上是课名、节次、真实上课钟点、教室和老师；
-通识选修课单独标注。顶栏的「今天 周X」胶囊点进去是当日时间轴。
-
-![当日时间轴](docs/screenshots/day-timeline.jpg)
-
-纵轴按节次号铺开，第 7 节到第 11 节各自占一行，时间对应课表上的钟点；
-选修课没有固定上课时间，单独列在下方。
-
-![节假日通知](docs/screenshots/notifications.jpg)
-
-铃铛提前一周提醒放假和补课安排，未读的有红点，点开转已读；
-「清除已读」删得掉的只有已读通知。
-
-![首次登录](docs/screenshots/empty-login.jpg)
-
-第一次打开或者删完课表就是这个界面，登录按钮就在屏幕中间，不用翻。
+实机效果截图在 [pictures/](pictures/)：周课表视图、当日时间轴、节假日通知、首次登录引导。
 
 ## 能帮你做什么
 
@@ -139,6 +120,15 @@ powershell -ExecutionPolicy Bypass -File build-apk.ps1
 构建流程是 aapt2 编译资源、javac、d8、jar 合包、zipalign、apksigner 签名，
 没有用 Gradle，方便直接看每一步做了什么。签名用的本地调试密钥
 （`android/debug.keystore`，已 gitignore），正式发布换自己的签名库。
+
+每次构建结束会打印 APK 的 SHA256。Release 里随安装包放了 `<版本号>-sha256.txt`，
+下载后先比对哈希再装，能防二次打包投毒：
+
+``` bash
+Get-FileHash Zik1nG-Schedule-debug.apk -Algorithm SHA256
+```
+
+任何来源的安装包，哈希对不上就不是这份代码构建的，别装。
 
 ## 配置（.env）
 
