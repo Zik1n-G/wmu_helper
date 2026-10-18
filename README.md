@@ -17,6 +17,8 @@ Android APP 是主要形态，界面是纯 Web，同一套代码在电脑上也�
 - 放假调休不会忘。铃铛提前一周提醒放假和补课安排，补课日单独提醒；通知永久保留，删只能删已读的
 - 上课钟点是准的。茶山和滨海两个校区两张作息表，按课程校区分别取时间
 
+更新记录见 [CHANGELOG.md](CHANGELOG.md)，安装包在 [Releases](https://github.com/Zik1n-G/wmu_helper/releases) 页面。
+
 ## 目录结构
 
 ```
