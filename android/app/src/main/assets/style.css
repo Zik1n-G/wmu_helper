@@ -75,9 +75,16 @@ body {
 }
 
 /* ---------- 顶栏 ---------- */
-:root { --app-bar-h: 58px; }   /* 12px*2 padding + 34px 按钮 */
+/* 顶栏 + 今日胶囊包成 sticky-head 整体钉在顶部。
+   两个子项都是普通流式元素，高度自然计算，不依赖 JS 测量，
+   也不会被 flex 容器（.main 是 flex 列）挤压 */
+.sticky-head {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--card);
+}
 .app-bar {
-  position: sticky; top: 0; z-index: 10;
   display: flex; align-items: center; gap: 10px;
   padding: 12px 14px;
   background: var(--card);
@@ -197,7 +204,7 @@ body {
   /* 首屏直接可见：固定层垂直居中，避开顶栏 */
   position: fixed;
   left: 0; right: 0;
-  top: var(--app-bar-h, 58px);
+  top: 70px;
   bottom: 0;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
@@ -224,7 +231,9 @@ body {
   .icon-btn.menu { display: block; }
 }
 
-/* ---------- 当日课程胶囊（顶栏周标签旁） ---------- */
+/* ---------- 当日课程胶囊 ---------- */
+/* 普通流式元素，位于 sticky-head 内：随顶栏一起钉住，
+   高度由内容自然决定（10px*2 padding + pill），不会被挤压 */
 .today-strip {
   display: flex; gap: 8px;
   align-items: center;
@@ -233,15 +242,6 @@ body {
   background: var(--card);
   border-bottom: 1px solid var(--line);
   scrollbar-width: none;
-  /* 钉在顶栏下方：不跟着课表内容滚动。
-     flex-shrink:0 + 固定 min-height：sticky 吸附时高度不被压缩 */
-  position: sticky;
-  top: var(--app-bar-h, 58px);
-  z-index: 9;
-  flex: 0 0 auto;
-  flex-shrink: 0;
-  min-height: 44px;
-  box-sizing: border-box;
 }
 .today-strip::-webkit-scrollbar { display: none; }
 .today-strip .strip-hint {

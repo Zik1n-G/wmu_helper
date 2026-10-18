@@ -207,7 +207,8 @@
 
     var hint = document.createElement('span');
     hint.className = 'strip-hint';
-    hint.textContent = '今天 周' + '日一二三四五六'.charAt(today.today_weekday) + '：';
+    var wd = today.today_weekday;
+    hint.textContent = '今天 周' + (['日', '一', '二', '三', '四', '五', '六'][wd] || '') + '：';
     strip.appendChild(hint);
 
     var days = data.weeks[String(week)] || {};
@@ -244,7 +245,7 @@
       monday = { m: +parts[0], d: +parts[1] };
     }
     var dayNum = monday ? monday.d + (weekday - 1) : null;
-    $('day-heading').textContent = '周' + '日一二三四五六'.charAt(weekday) +
+    $('day-heading').textContent = '周' + (['日', '一', '二', '三', '四', '五', '六'][weekday] || '') +
       (dayNum ? ' ' + monday.m + '月' + dayNum + '日' : '');
     $('day-sub').textContent = '第 ' + week + ' 周' +
       (monday ? ' · ' + monday.m + '月' + dayNum + '日' : '');

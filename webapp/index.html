@@ -16,24 +16,28 @@
     <div id="sidebar-mask" class="sidebar-mask hidden"></div>
 
     <div class="main">
-      <header class="app-bar">
-        <button id="btn-menu" class="icon-btn menu" title="选择周次">☰</button>
-        <div class="term-info">
-          <span id="week-label">第 1 周</span>
-          <span id="student-label" class="student"></span>
-        </div>
-        <div class="actions">
-          <button id="btn-bell" class="icon-btn" title="节假日通知">🔔</button>
-          <!-- 日志入口（调试用，默认隐藏：铃铛占了位置）
-          <button id="btn-log" class="icon-btn" title="运行日志">≡</button>
-          -->
-          <button id="btn-refresh" class="icon-btn" title="更新课表">↻</button>
-          <button id="btn-delete" class="icon-btn danger" title="删除课表">🗑</button>
-        </div>
-      </header>
+      <!-- 顶栏 + 今日胶囊包成一个 sticky 整体：滚动时一起钉在顶部。
+           两个子项都是普通流式元素，不靠 fixed 测量高度，不会被 flex 挤压 -->
+      <div class="sticky-head">
+        <header class="app-bar">
+          <button id="btn-menu" class="icon-btn menu" title="选择周次">☰</button>
+          <div class="term-info">
+            <span id="week-label">第 1 周</span>
+            <span id="student-label" class="student"></span>
+          </div>
+          <div class="actions">
+            <button id="btn-bell" class="icon-btn" title="节假日通知">🔔</button>
+            <!-- 日志入口（调试用，默认隐藏：铃铛占了位置）
+            <button id="btn-log" class="icon-btn" title="运行日志">≡</button>
+            -->
+            <button id="btn-refresh" class="icon-btn" title="更新课表">↻</button>
+            <button id="btn-delete" class="icon-btn danger" title="删除课表">🗑</button>
+          </div>
+        </header>
 
-      <!-- 当日课程胶囊：今天有几节课一眼看到 -->
-      <div id="today-strip" class="today-strip hidden"></div>
+        <!-- 当日课程胶囊：今天有几节课一眼看到 -->
+        <div id="today-strip" class="today-strip hidden"></div>
+      </div>
 
       <main id="schedule" class="schedule"></main>
 
