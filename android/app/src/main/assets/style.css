@@ -75,6 +75,7 @@ body {
 }
 
 /* ---------- 顶栏 ---------- */
+:root { --app-bar-h: 58px; }   /* 12px*2 padding + 34px 按钮 */
 .app-bar {
   position: sticky; top: 0; z-index: 10;
   display: flex; align-items: center; gap: 10px;
@@ -226,11 +227,21 @@ body {
 /* ---------- 当日课程胶囊（顶栏周标签旁） ---------- */
 .today-strip {
   display: flex; gap: 8px;
+  align-items: center;
   padding: 10px 14px;
   overflow-x: auto;
   background: var(--card);
   border-bottom: 1px solid var(--line);
   scrollbar-width: none;
+  /* 钉在顶栏下方：不跟着课表内容滚动。
+     flex-shrink:0 + 固定 min-height：sticky 吸附时高度不被压缩 */
+  position: sticky;
+  top: var(--app-bar-h, 58px);
+  z-index: 9;
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 .today-strip::-webkit-scrollbar { display: none; }
 .today-strip .strip-hint {

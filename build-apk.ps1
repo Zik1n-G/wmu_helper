@@ -58,7 +58,7 @@ if ($LASTEXITCODE -ne 0) { throw "aapt2 compile failed" }
 
 Write-Output "==> aapt2 link"
 & $aapt2 link -I $androidJar --manifest $manifest --java $generated --auto-add-overlay `
-    --min-sdk-version 23 --target-sdk-version 36 --version-code 1 --version-name 1.0.0 `
+    --min-sdk-version 23 --target-sdk-version 36 --version-code 2 --version-name 1.01 `
     -A $assets -o $baseApk $compiledResources
 if ($LASTEXITCODE -ne 0) { throw "aapt2 link failed" }
 

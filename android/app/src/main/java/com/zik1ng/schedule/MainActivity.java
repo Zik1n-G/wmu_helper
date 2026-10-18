@@ -513,7 +513,7 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public String appInfo() {
-            return "{\"version\":\"1.0.0\",\"platform\":\"android\"}";
+            return "{\"version\":\"1.01\",\"platform\":\"android\"}";
         }
     }
 

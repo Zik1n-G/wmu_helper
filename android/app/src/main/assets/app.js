@@ -61,7 +61,7 @@
   window.__onNativeEvent = function (message) {
     if (message === null || message === undefined) {
       loadData(function (d) {
-        data = d; currentWeek = data.current_week || 1; render();
+        data = d; currentWeek = startWeek(); render();
         var tip = $('empty-tip');
         if (tip) tip.classList.add('hidden');
       });
@@ -84,6 +84,14 @@
     updateFabToday();
   }
 
+  /* 打开 APP 时定位到哪一周：优先 today.today_week（按当天日期实时算），
+   * 学期外（寒暑假）退回拉取时的 current_week，再兜底第 1 周 */
+  function startWeek() {
+    var t = data ? (data.today || {}) : {};
+    if (t.in_term && t.today_week) return t.today_week;
+    return (data && data.current_week) || 1;
+  }
+
   function renderSidebar() {
     var box = $('month-list');
     box.innerHTML = '';
@@ -101,12 +109,15 @@
     // 当前周所在月份默认展开
     var currentMonth = data.week_months ? data.week_months[String(currentWeek)] : 0;
 
+    // “本周”用实时计算的 today_week（拉取时的 current_week 会随日期漂移）
+    var thisWeek = (data.today && data.today.in_term) ? data.today.today_week : 0;
+
     months.forEach(function (m) {
       var item = document.createElement('div');
       item.className = 'month-item' + (m === currentMonth ? ' open' : '');
       item.dataset.month = m;
 
-      var hasCurrent = byMonth[m].indexOf(data.current_week) !== -1;
+      var hasCurrent = thisWeek > 0 && byMonth[m].indexOf(thisWeek) !== -1;
       var btn = document.createElement('button');
       btn.className = 'month-btn' + (hasCurrent ? ' current' : '');
       btn.innerHTML = '<span>' + MONTH_NAMES[m] + '</span><span class="arrow">›</span>';
@@ -117,7 +128,7 @@
       byMonth[m].forEach(function (w) {
         var wk = document.createElement('button');
         wk.className = 'week-item' + (w === currentWeek ? ' active' : '') +
-          (w === data.current_week ? ' current' : '');
+          (w === thisWeek ? ' current' : '');
         var date = data.week_dates ? data.week_dates[String(w)] : '';
         wk.innerHTML = '第' + w + '周' + (date ? ' <small>' + date + '</small>' : '');
         wk.dataset.week = w;
@@ -142,7 +153,9 @@
     box.innerHTML = '';
 
     var date = data.week_dates ? data.week_dates[String(week)] : '';
-    var tag = week === data.current_week ? '本周' : '第 ' + week + ' 周';
+    var t0 = data.today || {};
+    var thisWeek = t0.in_term ? t0.today_week : 0;
+    var tag = week === thisWeek ? '本周' : '第 ' + week + ' 周';
     $('week-label').textContent = tag + (date ? '（' + date + ' 起）' : '');
     $('student-label').textContent =
       (data.student.name || '') + (data.student.class_name ? ' · ' + data.student.class_name : '');
@@ -665,6 +678,13 @@
       if (!$('day-view').classList.contains('hidden')) {
         tracking = false; return;
       }
+      // 落在今日胶囊上不跟踪：胶囊自己横向滚动，
+      // 在它上面左右滑是滚胶囊，不是切周
+      var t0 = e.target;
+      if (t0 && t0.closest && t0.closest('.today-strip')) {
+        tracking = false;
+        return;
+      }
       tracking = true;
       startX = e.touches[0].clientX;
       startY = e.touches[0].clientY;
@@ -788,7 +808,7 @@
   bindUI();
   loadData(function (d) {
     data = d;
-    currentWeek = data.current_week || 1;
+    currentWeek = startWeek();
     render();
   });
 })();
